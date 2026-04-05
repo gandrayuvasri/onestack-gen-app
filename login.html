@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #0d0d0d; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .box { background: #111; padding: 40px; border-radius: 15px; width: 350px; box-shadow: 0 0 20px rgba(0,255,204,0.2); }
+        h2 { text-align: center; color: #00ffcc; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; outline: none; font-size: 15px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; background: #00ffcc; color: black; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn:hover { background: #00ccaa; }
+        p { text-align: center; color: #aaa; }
+        a { color: #00ffcc; text-decoration: none; }
+        #msg { text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button class="btn" type="button" onclick="login()">Login</button>
+    <div id="msg"></div>
+    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+</div>
+
+<script>
+function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const msg = document.getElementById("msg");
+
+    if (!username || !password) {
+        msg.innerHTML = '<p style="color:orange;">Please fill all fields!</p>';
+        return;
+    }
+
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (users[username] && users[username] === password) {
+        localStorage.setItem("loggedIn", username);
+        msg.innerHTML = '<p style="color:#00ffcc;">✅ Login successful! Redirecting...</p>';
+        setTimeout(function() { window.location.href = "index.html"; }, 1500);
+    } else {
+        msg.innerHTML = '<p style="color:red;">❌ Wrong username or password!</p>';
+    }
+}
+</script>
+</body>
+</html>

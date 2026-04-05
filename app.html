@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>App Generator</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #0d0d0d; color: white; }
+        nav { background: #111; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .container { padding: 40px; text-align: center; }
+        textarea { width: 60%; height: 120px; border-radius: 10px; padding: 10px; border: none; outline: none; resize: none; }
+        .btn { padding: 12px 20px; margin-top: 15px; border-radius: 10px; background: #00ffcc; color: black; font-weight: bold; cursor: pointer; border: none; }
+        .btn:hover { background: #00ccaa; }
+        #output { margin-top: 30px; }
+        .card { background: #111; padding: 20px; border-radius: 15px; width: 60%; margin: auto; text-align: left; box-shadow: 0 0 15px rgba(0,255,204,0.3); animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h2>App Generator</h2>
+    <button class="btn" type="button" onclick="window.location.href='index.html'">⬅ Back</button>
+</nav>
+
+<div class="container">
+    <h1>Generate Your App</h1>
+    <textarea id="userInput" placeholder="Describe your app (e.g. food delivery, chat app)..."></textarea><br>
+    <button class="btn" type="button" onclick="generate()">Generate</button>
+    <div id="output"></div>
+</div>
+
+<script>
+function downloadResult() {
+    var text = document.getElementById("resultText").innerText;
+    var blob = new Blob([text], { type: "text/plain" });
+    var link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "generated-app.txt";
+    link.click();
+}
+
+async function generate() {
+    const input = document.getElementById("userInput").value;
+    const output = document.getElementById("output");
+
+    if (!input.trim()) {
+        output.innerHTML = "⚠️ Please enter something!";
+        return;
+    }
+
+    output.innerHTML = "⏳ Generating...";
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/generate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: input, type: "app" })
+        });
+
+        const data = await res.json();
+
+        output.innerHTML = `
+            <div class="card">
+                <h3>📱 App Plan</h3>
+                <p><b>Idea:</b> ${input}</p>
+                <pre id="resultText">${data.result}</pre>
+                <br>
+                <button class="btn" type="button" onclick="downloadResult()">⬇ Download Result</button>
+            </div>
+        `;
+    } catch (error) {
+        output.innerHTML = "❌ Backend not running! Run python backend.py first.";
+    }
+}
+</script>
+
+</body>
+</html>

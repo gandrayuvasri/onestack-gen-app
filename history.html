@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>History</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #0d0d0d; color: white; }
+        nav { background: #111; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .container { padding: 40px; }
+        h1 { text-align: center; color: #00ffcc; }
+        .btn { padding: 12px 20px; border-radius: 10px; background: #00ffcc; color: black; font-weight: bold; cursor: pointer; border: none; }
+        .btn:hover { background: #00ccaa; }
+        .card { background: #111; padding: 20px; border-radius: 15px; margin: 15px auto; width: 70%; box-shadow: 0 0 15px rgba(0,255,204,0.2); }
+        .card h3 { color: #00ffcc; margin: 0 0 10px 0; }
+        .card p { margin: 5px 0; color: #aaa; }
+        pre { white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
+        #nodata { text-align: center; color: #aaa; margin-top: 50px; font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h2>History</h2>
+    <button class="btn" type="button" onclick="window.location.href='index.html'">⬅ Back</button>
+</nav>
+
+<div class="container">
+    <h1>Previously Generated Results</h1>
+    <div id="history"></div>
+</div>
+
+<script>
+fetch("http://127.0.0.1:5000/get")
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        var container = document.getElementById("history");
+
+        if (data.length === 0) {
+            container.innerHTML = '<p id="nodata">No history yet! Go generate something first.</p>';
+            return;
+        }
+
+        // Show latest first
+        data.reverse();
+
+        data.forEach(function(row) {
+            container.innerHTML += `
+                <div class="card">
+                    <h3>🔹 ${row[3]} Generator</h3>
+                    <p><b>Prompt:</b> ${row[1]}</p>
+                    <pre>${row[2]}</pre>
+                </div>
+            `;
+        });
+    })
+    .catch(function(err) {
+        document.getElementById("history").innerHTML =
+            '<p style="color:red;">❌ Cannot load history. Is backend running?</p>';
+    });
+</script>
+
+</body>
+</html>
