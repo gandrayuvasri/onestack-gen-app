@@ -42,3 +42,4 @@ The system processes prompts using a **Flask REST API**, generates intelligent p
 - Deploy online for public access
 - Add user dashboard after login
 - Export results as PDF
+- add courses of prompting techniques as this app based on prompting
